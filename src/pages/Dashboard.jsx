@@ -1,10 +1,15 @@
-import React from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import './LoginPage.css';
+import React, { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
+import Dashboard from '../components/Dashboard';
+import Programlist from '../components/Programlist';
+import Subjectlist from '../components/Subjectlist';
+import { programs, subjects } from '../data/mockData';
+import './OfferingsPage.css';
 
 const DashboardPage = () => {
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  const [activeModule, setActiveModule] = useState('dashboard');
 
   if (!currentUser) {
     return <Navigate to="/" replace />;
@@ -16,25 +21,53 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="login-container">
+    <main className="offerings-page">
       <div className="orb orb-1"></div>
       <div className="orb orb-2"></div>
+      <div className="orb orb-3"></div>
 
-      <div className="glass-card">
-        <h1 className="title">Dashboard</h1>
-        <p className="subtitle">Welcome, {currentUser.name}</p>
+      <section className="offerings-shell">
+        <header className="page-header">
+          <div>
+            <h1>Academic Offerings Dashboard</h1>
+            <p>
+              Welcome, {currentUser.name} ({currentUser.id})
+            </p>
+          </div>
+          <button type="button" className="logout-btn" onClick={handleLogout}>
+            Log Out
+          </button>
+        </header>
 
-        <p className="subtitle">Student ID: {currentUser.id}</p>
+        <nav className="module-tabs">
+          <button
+            type="button"
+            className={activeModule === 'dashboard' ? 'tab active' : 'tab'}
+            onClick={() => setActiveModule('dashboard')}
+          >
+            Dashboard
+          </button>
+          <button
+            type="button"
+            className={activeModule === 'programs' ? 'tab active' : 'tab'}
+            onClick={() => setActiveModule('programs')}
+          >
+            Program Offerings
+          </button>
+          <button
+            type="button"
+            className={activeModule === 'subjects' ? 'tab active' : 'tab'}
+            onClick={() => setActiveModule('subjects')}
+          >
+            Subject Offerings
+          </button>
+        </nav>
 
-        <button type="button" className="sign-in-btn" onClick={handleLogout}>
-          Log Out
-        </button>
-
-        <div className="footer-text" style={{ marginTop: '16px' }}>
-          <Link to="/" className="register-link">Back to Login</Link>
-        </div>
-      </div>
-    </div>
+        {activeModule === 'dashboard' && <Dashboard programs={programs} subjects={subjects} />}
+        {activeModule === 'programs' && <Programlist programs={programs} subjects={subjects} />}
+        {activeModule === 'subjects' && <Subjectlist subjects={subjects} programs={programs} />}
+      </section>
+    </main>
   );
 };
 
