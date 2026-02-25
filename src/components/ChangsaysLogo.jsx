@@ -12,7 +12,7 @@ const ChangsaysLogo = ({ compact = false, subtitle = true, forceText = false }) 
           <img
             className="logo-photo"
             src="/changsays-university-logo.png"
-            alt="Changsays University logo"
+            alt="Changsay's University logo"
             onError={() => setImageFailed(true)}
           />
         ) : (
@@ -30,8 +30,8 @@ const ChangsaysLogo = ({ compact = false, subtitle = true, forceText = false }) 
 
       {(!hasPhotoLogo || forceText) && (
         <div className="logo-copy">
-          <h1>Changsays University</h1>
-          {subtitle && <p>KNOWLEDGE, BUT MAKE IT FUN</p>}
+          <h1>Changsay's University</h1>
+          {subtitle && <p>COME FOR THE DEGREE, STAY FOR THE GLEE</p>}
         </div>
       )}
     </div>
