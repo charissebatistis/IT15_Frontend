@@ -5,6 +5,7 @@ import Programlist from '../components/Programlist';
 import Subjectlist from '../components/Subjectlist';
 import WeatherPanel from '../components/WeatherPanel';
 import Chatbox from '../components/Chatbox';
+import ChangsaysLogo from '../components/ChangsaysLogo';
 import { programs, subjects } from '../data/mockData';
 import './OfferingsPage.css';
 
@@ -30,8 +31,8 @@ const DashboardPage = () => {
 
       <section className="offerings-shell">
         <header className="page-header">
-          <div>
-            <h1>University of Changsays</h1>
+          <div className="page-brand">
+            <ChangsaysLogo compact />
             <p>
               Welcome to the campus where Chang says, everyone slays. ({currentUser.id})
             </p>

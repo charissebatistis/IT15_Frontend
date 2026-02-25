@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ChangsaysLogo from '../components/ChangsaysLogo';
 import './LoginPage.css';
 
 const LoginPage = () => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -34,30 +34,7 @@ const LoginPage = () => {
       <div className="orb orb-3"></div>
 
       <div className="glass-card">
-        <div
-          className={`lion-logo ${
-            isPasswordFocused
-              ? showPassword
-                ? 'lion-cover-mouth'
-                : 'lion-cover-eyes'
-              : ''
-          }`}
-          aria-hidden="true"
-        >
-          <div className="lion-ear lion-ear-left"></div>
-          <div className="lion-ear lion-ear-right"></div>
-          <div className="lion-face">
-            <div className="lion-eye lion-eye-left"></div>
-            <div className="lion-eye lion-eye-right"></div>
-            <div className="lion-nose"></div>
-            <div className="lion-mouth"></div>
-          </div>
-          <div className="lion-paw lion-paw-left"></div>
-          <div className="lion-paw lion-paw-right"></div>
-        </div>
-
-        <h1 className="title">University of Changsays</h1>
-        <p className="subtitle">Where Chang says it, and campus obeys it.</p>
+        <ChangsaysLogo forceText />
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -79,8 +56,6 @@ const LoginPage = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onFocus={() => setIsPasswordFocused(true)}
-                onBlur={() => setIsPasswordFocused(false)}
               />
               <button
                 type="button"

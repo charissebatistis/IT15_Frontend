@@ -1,0 +1,83 @@
+.changsays-logo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 auto 14px;
+}
+
+.changsays-logo.compact {
+  margin: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-badge {
+  width: 112px;
+  height: 96px;
+  padding: 0;
+}
+
+.changsays-logo.compact .logo-badge {
+  width: 62px;
+  height: 56px;
+}
+
+.logo-badge svg {
+  width: 100%;
+  height: 100%;
+}
+
+.logo-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.logo-copy {
+  text-align: left;
+}
+
+.changsays-logo.compact .logo-copy {
+  text-align: left;
+}
+
+.logo-copy h1 {
+  margin: 0;
+  font-size: 44px;
+  line-height: 1.05;
+  letter-spacing: 0.5px;
+  color: #10233d;
+}
+
+.changsays-logo.compact .logo-copy h1 {
+  font-size: 26px;
+}
+
+.logo-copy p {
+  margin: 3px 0 0;
+  color: #2f3744;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+@media (max-width: 760px) {
+  .logo-copy h1 {
+    font-size: 34px;
+  }
+
+  .logo-copy p {
+    font-size: 12px;
+  }
+
+  .changsays-logo.compact .logo-copy h1 {
+    font-size: 20px;
+  }
+
+  .changsays-logo.compact .logo-copy p {
+    font-size: 10px;
+  }
+}
