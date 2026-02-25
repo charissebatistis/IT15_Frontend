@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #020617;
+  background: #fff1f6;
   overflow: hidden;
   position: relative;
   font-family: 'Poppins', sans-serif;
@@ -21,9 +21,9 @@
   z-index: 1;
 }
 
-.orb-1 { width: 500px; height: 500px; background: #1e40af; top: -10%; left: -10%; opacity: 0.5; animation: drift 20s infinite linear; }
-.orb-2 { width: 400px; height: 400px; background: #701a75; bottom: -5%; right: 10%; opacity: 0.4; animation: drift 15s infinite linear reverse; }
-.orb-3 { width: 300px; height: 300px; background: #0369a1; top: 40%; left: 30%; opacity: 0.3; animation: drift 25s infinite ease-in-out; }
+.orb-1 { width: 500px; height: 500px; background: #f9a8d4; top: -10%; left: -10%; opacity: 0.5; animation: drift 20s infinite linear; }
+.orb-2 { width: 400px; height: 400px; background: #f472b6; bottom: -5%; right: 10%; opacity: 0.4; animation: drift 15s infinite linear reverse; }
+.orb-3 { width: 300px; height: 300px; background: #fecdd3; top: 40%; left: 30%; opacity: 0.5; animation: drift 25s infinite ease-in-out; }
 
 @keyframes drift {
   0% { transform: rotate(0deg) translate(20px); }
@@ -36,12 +36,12 @@
   width: 90%;
   max-width: 420px;
   padding: 40px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(244, 114, 182, 0.3);
   border-radius: 30px;
-  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
-  color: white;
+  box-shadow: 0 25px 60px rgba(190, 24, 93, 0.18);
+  color: #4a1032;
   text-align: center;
   transition: transform 0.4s ease;
 }
@@ -53,13 +53,13 @@
 .form-label {
   display: block;
   margin: 0 0 8px;
-  color: #cbd5e1;
+  color: #7a294f;
   font-size: 13px;
   font-weight: 600;
 }
 
 .title { font-size: 32px; font-weight: 800; margin-bottom: 5px; letter-spacing: -1px; }
-.subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 35px; }
+.subtitle { color: #9d4a73; font-size: 14px; margin-bottom: 35px; }
 
 .password-wrapper { position: relative; }
 .toggle-btn {
@@ -95,7 +95,7 @@
   top: 5px;
   width: 20px;
   height: 12px;
-  border: 2px solid #cbd5e1;
+  border: 2px solid #9d4a73;
   border-radius: 14px / 9px;
 }
 
@@ -105,7 +105,7 @@
   top: 8px;
   width: 8px;
   height: 8px;
-  background: #cbd5e1;
+  background: #9d4a73;
   border-radius: 50%;
 }
 
@@ -115,7 +115,7 @@
   top: 2px;
   width: 16px;
   height: 2px;
-  background: #f8fafc;
+  background: #7a294f;
   transform: rotate(35deg) scaleX(0);
   transform-origin: center;
   transition: transform 0.2s ease;
@@ -133,10 +133,10 @@
   width: 100%;
   padding: 15px 20px;
   margin: 10px 0 20px 0;
-  background: rgba(0, 0, 0, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.88);
+  border: 2px solid rgba(244, 114, 182, 0.25);
   border-radius: 15px;
-  color: white;
+  color: #4a1032;
   font-size: 15px;
   outline: none;
   box-sizing: border-box;
@@ -149,9 +149,9 @@
 }
 
 .login-input:focus {
-  border-color: #3b82f6;
-  background: rgba(0, 0, 0, 0.4);
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+  border-color: #ec4899;
+  background: #ffffff;
+  box-shadow: 0 0 15px rgba(236, 72, 153, 0.25);
 }
 
 .input-valid { border-color: #10b981 !important; }
@@ -159,20 +159,20 @@
 .sign-in-btn {
   width: 100%;
   padding: 18px;
-  background: #3b82f6;
+  background: #ec4899;
   border: none;
   border-radius: 15px;
   color: white;
   font-weight: 700;
   cursor: pointer;
   transition: 0.3s;
-  box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 10px 20px rgba(236, 72, 153, 0.3);
 }
 
 .sign-in-btn:hover:not(.loading) {
-  background: #2563eb;
+  background: #db2777;
   transform: translateY(-3px);
-  box-shadow: 0 15px 25px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 15px 25px rgba(219, 39, 119, 0.35);
 }
 
 .loading { opacity: 0.7; cursor: not-allowed; }
@@ -301,17 +301,17 @@
 
 .footer-text {
   margin-top: 18px;
-  color: #94a3b8;
+  color: #9d4a73;
   font-size: 14px;
 }
 
 .register-link {
-  color: #93c5fd;
+  color: #db2777;
   font-weight: 600;
 }
 
 .register-link:hover {
-  color: #bfdbfe;
+  color: #be185d;
 }
 
 @keyframes spin { 100% { transform: rotate(360deg); } }

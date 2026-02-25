@@ -3,6 +3,8 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import Dashboard from '../components/Dashboard';
 import Programlist from '../components/Programlist';
 import Subjectlist from '../components/Subjectlist';
+import WeatherPanel from '../components/WeatherPanel';
+import Chatbox from '../components/Chatbox';
 import { programs, subjects } from '../data/mockData';
 import './OfferingsPage.css';
 
@@ -29,15 +31,20 @@ const DashboardPage = () => {
       <section className="offerings-shell">
         <header className="page-header">
           <div>
-            <h1>Academic Offerings Dashboard</h1>
+            <h1>University of Changsays</h1>
             <p>
-              Welcome, {currentUser.name} ({currentUser.id})
+              Welcome to the campus where Chang says, everyone slays. ({currentUser.id})
             </p>
           </div>
           <button type="button" className="logout-btn" onClick={handleLogout}>
             Log Out
           </button>
         </header>
+
+        <section className="top-utilities">
+          <WeatherPanel compact />
+          <Chatbox compact />
+        </section>
 
         <nav className="module-tabs">
           <button

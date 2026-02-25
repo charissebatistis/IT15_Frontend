@@ -7,6 +7,9 @@ const offeredLabel = {
 };
 
 const Subjectcard = ({ subject, onSelect, isActive }) => {
+  const prereqCount = subject.prerequisites.length;
+  const coreqCount = subject.corequisites.length;
+
   return (
     <button
       type="button"
@@ -19,6 +22,10 @@ const Subjectcard = ({ subject, onSelect, isActive }) => {
       </div>
       <h3>{subject.title}</h3>
       <p>{subject.programCode}</p>
+      <div className="item-chips">
+        <span className="mini-chip">{prereqCount} pre-req</span>
+        <span className="mini-chip">{coreqCount} co-req</span>
+      </div>
       <div className="meta-row">
         <span>{subject.units} units</span>
         <span>{subject.semesterTerm}</span>

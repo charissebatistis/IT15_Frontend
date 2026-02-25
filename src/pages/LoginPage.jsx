@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 
 const LoginPage = () => {
@@ -15,17 +15,13 @@ const LoginPage = () => {
     setIsLoading(true);
 
     setTimeout(() => {
-      const storedUser = JSON.parse(localStorage.getItem('studentAccount'));
-
-      if (!storedUser) {
-        alert('No account found. Please register first!');
-      } else if (storedUser.id === id && storedUser.password === password) {
-        localStorage.setItem('currentUser', JSON.stringify(storedUser));
-        alert(`Welcome back, ${storedUser.name}!`);
-        navigate('/dashboard');
-      } else {
-        alert('Invalid ID or Password. Please try again.');
-      }
+      const loginUser = {
+        name: 'Guest Student',
+        id,
+      };
+      localStorage.setItem('currentUser', JSON.stringify(loginUser));
+      alert(`Welcome, ${loginUser.name}!`);
+      navigate('/dashboard');
 
       setIsLoading(false);
     }, 1500);
@@ -60,8 +56,8 @@ const LoginPage = () => {
           <div className="lion-paw lion-paw-right"></div>
         </div>
 
-        <h1 className="title">EduPortal</h1>
-        <p className="subtitle">Enrollment & Student Management</p>
+        <h1 className="title">University of Changsays</h1>
+        <p className="subtitle">Where Chang says it, and campus obeys it.</p>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -110,11 +106,6 @@ const LoginPage = () => {
             {isLoading ? <span className="spinner"></span> : 'Authenticate Access'}
           </button>
         </form>
-
-        <div className="footer-text">
-          <span>First time here? </span>
-          <Link to="/register" className="register-link">Register Student</Link>
-        </div>
       </div>
     </div>
   );
