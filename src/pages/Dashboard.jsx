@@ -34,7 +34,7 @@ const DashboardPage = () => {
           <div className="page-brand">
             <ChangsaysLogo compact />
             <p>
-              Welcome to the campus where Chang says, everyone slays. ({currentUser.id})
+              Welcome to the campus where Chang says, everyone slays. ({currentUser.email || currentUser.id})
             </p>
           </div>
           <button type="button" className="logout-btn" onClick={handleLogout}>

@@ -3,21 +3,49 @@ import { useNavigate } from 'react-router-dom';
 import ChangsaysLogo from '../components/ChangsaysLogo';
 import './LoginPage.css';
 
+const VALID_USERS = [
+  {
+    email: 'student@university.edu',
+    password: 'changsays123',
+    name: 'Guest Student',
+  },
+];
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setErrorMessage('');
+
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!EMAIL_REGEX.test(normalizedEmail)) {
+      setErrorMessage('Please enter a valid email address.');
+      return;
+    }
+
+    const matchedUser = VALID_USERS.find(
+      (user) => user.email === normalizedEmail && user.password === password
+    );
+
+    if (!matchedUser) {
+      setErrorMessage('Invalid email or password.');
+      return;
+    }
+
     setIsLoading(true);
 
     setTimeout(() => {
       const loginUser = {
-        name: 'Guest Student',
-        email,
+        name: matchedUser.name,
+        email: matchedUser.email,
       };
       localStorage.setItem('currentUser', JSON.stringify(loginUser));
       alert(`Welcome, ${loginUser.name}!`);
@@ -40,12 +68,15 @@ const LoginPage = () => {
           <div className="form-group">
             <label className="form-label">Email</label>
             <input
-              className={`login-input ${email.length > 5 ? 'input-valid' : ''}`}
+              className={`login-input ${EMAIL_REGEX.test(email) ? 'input-valid' : ''}`}
               type="email"
               placeholder="e.g. student@university.edu"
               required
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setErrorMessage('');
+              }}
             />
            
             <label className="form-label">Password</label>
@@ -56,7 +87,10 @@ const LoginPage = () => {
                 placeholder="********"
                 required
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setErrorMessage('');
+                }}
               />
             
               <button
@@ -74,6 +108,8 @@ const LoginPage = () => {
               </button>
             </div>
           </div>
+
+          {errorMessage && <p className="form-error">{errorMessage}</p>}
           
           <button
             type="submit"
