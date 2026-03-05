@@ -4,7 +4,7 @@ import ChangsaysLogo from '../components/ChangsaysLogo';
 import './LoginPage.css';
 
 const LoginPage = () => {
-  const [id, setId] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -17,7 +17,7 @@ const LoginPage = () => {
     setTimeout(() => {
       const loginUser = {
         name: 'Guest Student',
-        id,
+        email,
       };
       localStorage.setItem('currentUser', JSON.stringify(loginUser));
       alert(`Welcome, ${loginUser.name}!`);
@@ -38,15 +38,16 @@ const LoginPage = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">University ID</label>
+            <label className="form-label">Email</label>
             <input
-              className={`login-input ${id.length > 5 ? 'input-valid' : ''}`}
-              placeholder="e.g. 2026-0001"
+              className={`login-input ${email.length > 5 ? 'input-valid' : ''}`}
+              type="email"
+              placeholder="e.g. student@university.edu"
               required
-              value={id}
-              onChange={(e) => setId(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
-
+           
             <label className="form-label">Password</label>
             <div className="password-wrapper">
               <input
@@ -57,6 +58,7 @@ const LoginPage = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+            
               <button
                 type="button"
                 className="toggle-btn"
@@ -72,7 +74,7 @@ const LoginPage = () => {
               </button>
             </div>
           </div>
-
+          
           <button
             type="submit"
             className={`sign-in-btn ${isLoading ? 'loading' : ''}`}
