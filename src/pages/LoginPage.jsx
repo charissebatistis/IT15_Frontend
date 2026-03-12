@@ -1,15 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ChangsaysLogo from '../components/ChangsaysLogo';
+import { authAPI } from '../services/api';
 import './LoginPage.css';
-
-const VALID_USERS = [
-  {
-    email: 'student@university.edu',
-    password: 'changsays123',
-    name: 'Guest Student',
-  },
-];
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -21,7 +14,7 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
 
@@ -31,28 +24,26 @@ const LoginPage = () => {
       return;
     }
 
-    const matchedUser = VALID_USERS.find(
-      (user) => user.email === normalizedEmail && user.password === password
-    );
-
-    if (!matchedUser) {
-      setErrorMessage('Invalid email or password.');
-      return;
-    }
-
     setIsLoading(true);
 
-    setTimeout(() => {
-      const loginUser = {
-        name: matchedUser.name,
-        email: matchedUser.email,
-      };
-      localStorage.setItem('currentUser', JSON.stringify(loginUser));
-      alert(`Welcome, ${loginUser.name}!`);
-      navigate('/dashboard');
+    try {
+      const response = await authAPI.login({
+        email: normalizedEmail,
+        password: password,
+      });
 
+      // Store token and user data
+      localStorage.setItem('authToken', response.token);
+      localStorage.setItem('currentUser', JSON.stringify(response.user));
+
+      alert(`Welcome, ${response.user.name}!`);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Login error:', error);
+      setErrorMessage('Invalid email or password.');
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (

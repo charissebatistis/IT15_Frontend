@@ -1,78 +1,89 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Programdetails from './Programdetails';
 import Filterbar from './Filterbar';
 
 const Programlist = ({ programs, subjects }) => {
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [typeFilter, setTypeFilter] = useState('all');
-  const [sortFilter, setSortFilter] = useState('code-asc');
+  const [departmentFilter, setDepartmentFilter] = useState('all');
+  const [creditsFilter, setCreditsFilter] = useState('all');
+  const [sortFilter, setSortFilter] = useState('name-asc');
   const [selectedProgramId, setSelectedProgramId] = useState(programs[0]?.id || null);
+
+  useEffect(() => {
+    if (!selectedProgramId && programs.length) {
+      setSelectedProgramId(programs[0].id);
+    }
+  }, [programs, selectedProgramId]);
 
   const visiblePrograms = useMemo(() => {
     const filtered = programs.filter((program) => {
       const query = search.toLowerCase();
       const matchesSearch =
-        program.code.toLowerCase().includes(query) ||
-        program.name.toLowerCase().includes(query);
-      const matchesStatus = statusFilter === 'all' || program.status === statusFilter;
-      const matchesType = typeFilter === 'all' || program.type === typeFilter;
-      return matchesSearch && matchesStatus && matchesType;
+        program.course_code.toLowerCase().includes(query) ||
+        program.course_name.toLowerCase().includes(query) ||
+        program.department.toLowerCase().includes(query);
+      const matchesDepartment = departmentFilter === 'all' || program.department === departmentFilter;
+      const matchesCredits = creditsFilter === 'all' || String(program.credits) === creditsFilter;
+      return matchesSearch && matchesDepartment && matchesCredits;
     });
 
     const sorted = [...filtered];
-    if (sortFilter === 'units-desc') {
-      sorted.sort((a, b) => b.totalUnits - a.totalUnits);
+    if (sortFilter === 'enrollment-desc') {
+      sorted.sort((a, b) => b.current_enrollment - a.current_enrollment);
+    } else if (sortFilter === 'credits-desc') {
+      sorted.sort((a, b) => b.credits - a.credits);
+    } else if (sortFilter === 'code-asc') {
+      sorted.sort((a, b) => a.course_code.localeCompare(b.course_code));
     } else if (sortFilter === 'date-desc') {
-      sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     } else {
-      sorted.sort((a, b) => a.code.localeCompare(b.code));
+      sorted.sort((a, b) => a.course_name.localeCompare(b.course_name));
     }
     return sorted;
-  }, [programs, search, statusFilter, typeFilter, sortFilter]);
+  }, [programs, search, departmentFilter, creditsFilter, sortFilter]);
 
   const selectedProgram =
     visiblePrograms.find((program) => program.id === selectedProgramId) || visiblePrograms[0] || null;
+
+  const departmentOptions = Array.from(new Set(programs.map((program) => program.department))).sort();
+  const creditsOptions = Array.from(new Set(programs.map((program) => String(program.credits)))).sort();
 
   return (
     <div className="module-layout">
       <div>
         <div className="module-head">
-          <h2>Program Listing</h2>
-          <p>Browse, filter, and inspect all available academic programs.</p>
+          <h2>Course Listing</h2>
+          <p>Browse, filter, and inspect all available courses from the Laravel backend.</p>
         </div>
 
         <div className="section-insights">
-          <span className="insight-pill">Showing {visiblePrograms.length} of {programs.length} programs</span>
-          <span className="insight-pill">Status: {statusFilter === 'all' ? 'Any' : statusFilter}</span>
-          <span className="insight-pill">Type: {typeFilter === 'all' ? 'Any' : typeFilter}</span>
+          <span className="insight-pill">Showing {visiblePrograms.length} of {programs.length} courses</span>
+          <span className="insight-pill">Department: {departmentFilter === 'all' ? 'Any' : departmentFilter}</span>
+          <span className="insight-pill">Credits: {creditsFilter === 'all' ? 'Any' : creditsFilter}</span>
           <span className="insight-pill">Sort: {sortFilter}</span>
         </div>
 
         <Filterbar
           search={search}
           onSearch={setSearch}
-          searchPlaceholder="Search program code"
+          searchPlaceholder="Search course code, name, or department"
           filters={[
             {
-              key: 'status',
-              value: statusFilter,
-              onChange: setStatusFilter,
+              key: 'department',
+              value: departmentFilter,
+              onChange: setDepartmentFilter,
               options: [
-                { value: 'all', label: 'All status' },
-                { value: 'active', label: 'Active' },
-                { value: 'under review', label: 'Under review' },
-                { value: 'phased out', label: 'Phased out' },
+                { value: 'all', label: 'All departments' },
+                ...departmentOptions.map((value) => ({ value, label: value })),
               ],
             },
             {
-              key: 'type',
-              value: typeFilter,
-              onChange: setTypeFilter,
+              key: 'credits',
+              value: creditsFilter,
+              onChange: setCreditsFilter,
               options: [
-                { value: 'all', label: 'All types' },
-                { value: "Bachelor's", label: "Bachelor's" },
-                { value: 'Diploma', label: 'Diploma' },
+                { value: 'all', label: 'All credits' },
+                ...creditsOptions.map((value) => ({ value, label: `${value} credits` })),
               ],
             },
             {
@@ -80,8 +91,10 @@ const Programlist = ({ programs, subjects }) => {
               value: sortFilter,
               onChange: setSortFilter,
               options: [
+                { value: 'name-asc', label: 'Sort: Name (A-Z)' },
                 { value: 'code-asc', label: 'Sort: Code (A-Z)' },
-                { value: 'units-desc', label: 'Sort: Units (High-Low)' },
+                { value: 'credits-desc', label: 'Sort: Credits (High-Low)' },
+                { value: 'enrollment-desc', label: 'Sort: Enrollment (High-Low)' },
                 { value: 'date-desc', label: 'Sort: Newest' },
               ],
             },
@@ -94,11 +107,11 @@ const Programlist = ({ programs, subjects }) => {
               <thead>
                 <tr>
                   <th>Code</th>
-                  <th>Program</th>
-                  <th>Type</th>
-                  <th>Status</th>
-                  <th>Duration</th>
-                  <th>Units</th>
+                  <th>Course</th>
+                  <th>Department</th>
+                  <th>Credits</th>
+                  <th>Instructor</th>
+                  <th>Enrollment</th>
                 </tr>
               </thead>
               <tbody>
@@ -109,24 +122,20 @@ const Programlist = ({ programs, subjects }) => {
                     onClick={() => setSelectedProgramId(program.id)}
                   >
                     <td>
-                      <strong>{program.code}</strong>
+                      <strong>{program.course_code}</strong>
                     </td>
-                    <td>{program.name}</td>
-                    <td>{program.type}</td>
-                    <td>
-                      <span className={`status-badge ${program.status.replace(' ', '-')}`}>
-                        {program.status}
-                      </span>
-                    </td>
-                    <td>{program.duration}</td>
-                    <td>{program.totalUnits}</td>
+                    <td>{program.course_name}</td>
+                    <td>{program.department}</td>
+                    <td>{program.credits}</td>
+                    <td>{program.instructor_name}</td>
+                    <td>{program.current_enrollment} / {program.max_capacity}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         ) : (
-          <div className="empty-state">No programs match your filters. Try broadening your search.</div>
+          <div className="empty-state">No courses match your filters. Try broadening your search.</div>
         )}
       </div>
 

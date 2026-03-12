@@ -1,98 +1,92 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Subjectdetails from './Subjectdetails';
 import Filterbar from './Filterbar';
 
 const Subjectlist = ({ subjects, programs }) => {
   const [search, setSearch] = useState('');
-  const [semesterFilter, setSemesterFilter] = useState('all');
-  const [unitsFilter, setUnitsFilter] = useState('all');
-  const [prereqFilter, setPrereqFilter] = useState('all');
+  const [yearFilter, setYearFilter] = useState('all');
+  const [genderFilter, setGenderFilter] = useState('all');
   const [programFilter, setProgramFilter] = useState('all');
-  const [sortFilter, setSortFilter] = useState('code-asc');
+  const [sortFilter, setSortFilter] = useState('name-asc');
   const [selectedSubjectId, setSelectedSubjectId] = useState(subjects[0]?.id || null);
+
+  useEffect(() => {
+    if (!selectedSubjectId && subjects.length) {
+      setSelectedSubjectId(subjects[0].id);
+    }
+  }, [selectedSubjectId, subjects]);
 
   const visibleSubjects = useMemo(() => {
     const filtered = subjects.filter((subject) => {
       const query = search.toLowerCase();
       const matchesSearch =
-        subject.code.toLowerCase().includes(query) || subject.title.toLowerCase().includes(query);
-      const matchesSemester = semesterFilter === 'all' || subject.semesterTerm === semesterFilter;
-      const matchesUnits = unitsFilter === 'all' || String(subject.units) === unitsFilter;
-      const hasPrereq = subject.prerequisites.length > 0;
-      const matchesPrereq =
-        prereqFilter === 'all' ||
-        (prereqFilter === 'with' && hasPrereq) ||
-        (prereqFilter === 'without' && !hasPrereq);
-      const matchesProgram = programFilter === 'all' || subject.programCode === programFilter;
+        subject.fullName.toLowerCase().includes(query) ||
+        subject.studentId.toLowerCase().includes(query) ||
+        subject.courseCode.toLowerCase().includes(query) ||
+        subject.courseName.toLowerCase().includes(query);
+      const matchesYear = yearFilter === 'all' || String(subject.yearLevel) === yearFilter;
+      const matchesGender = genderFilter === 'all' || subject.gender === genderFilter;
+      const matchesProgram = programFilter === 'all' || subject.courseCode === programFilter;
 
-      return matchesSearch && matchesSemester && matchesUnits && matchesPrereq && matchesProgram;
+      return matchesSearch && matchesYear && matchesGender && matchesProgram;
     });
 
     const sorted = [...filtered];
-    if (sortFilter === 'units-desc') {
-      sorted.sort((a, b) => b.units - a.units);
-    } else if (sortFilter === 'title-asc') {
-      sorted.sort((a, b) => a.title.localeCompare(b.title));
+    if (sortFilter === 'year-desc') {
+      sorted.sort((a, b) => b.yearLevel - a.yearLevel);
+    } else if (sortFilter === 'course-asc') {
+      sorted.sort((a, b) => a.courseCode.localeCompare(b.courseCode));
     } else if (sortFilter === 'date-desc') {
-      sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      sorted.sort((a, b) => new Date(b.enrolledAt) - new Date(a.enrolledAt));
     } else {
-      sorted.sort((a, b) => a.code.localeCompare(b.code));
+      sorted.sort((a, b) => a.fullName.localeCompare(b.fullName));
     }
     return sorted;
-  }, [subjects, search, semesterFilter, unitsFilter, prereqFilter, programFilter, sortFilter]);
+  }, [subjects, search, yearFilter, genderFilter, programFilter, sortFilter]);
 
   const selectedSubject =
     visibleSubjects.find((subject) => subject.id === selectedSubjectId) || visibleSubjects[0] || null;
 
-  const semesterOptions = Array.from(new Set(subjects.map((subject) => subject.semesterTerm)));
-  const unitOptions = Array.from(new Set(subjects.map((subject) => String(subject.units)))).sort();
+  const yearOptions = Array.from(new Set(subjects.map((subject) => String(subject.yearLevel)))).sort();
+  const genderOptions = Array.from(new Set(subjects.map((subject) => subject.gender))).sort();
+  const courseOptions = Array.from(new Set(subjects.map((subject) => subject.courseCode))).sort();
 
   return (
     <div className="module-layout">
       <div>
         <div className="module-head">
-          <h2>Subject Listing</h2>
-          <p>Track subject offerings, semester availability, and requirements.</p>
+          <h2>Student Listing</h2>
+          <p>Browse enrolled students with demographic information and course assignments.</p>
         </div>
 
         <div className="section-insights">
-          <span className="insight-pill">Showing {visibleSubjects.length} of {subjects.length} subjects</span>
-          <span className="insight-pill">Program: {programFilter === 'all' ? 'Any' : programFilter}</span>
-          <span className="insight-pill">Pre-req: {prereqFilter === 'all' ? 'Any' : prereqFilter}</span>
+          <span className="insight-pill">Showing {visibleSubjects.length} of {subjects.length} students</span>
+          <span className="insight-pill">Course: {programFilter === 'all' ? 'Any' : programFilter}</span>
+          <span className="insight-pill">Year: {yearFilter === 'all' ? 'Any' : yearFilter}</span>
           <span className="insight-pill">Sort: {sortFilter}</span>
         </div>
 
         <Filterbar
           search={search}
           onSearch={setSearch}
-          searchPlaceholder="Search by subject code or title"
+          searchPlaceholder="Search by student name, ID, or course"
           filters={[
             {
-              key: 'semester',
-              value: semesterFilter,
-              onChange: setSemesterFilter,
+              key: 'year',
+              value: yearFilter,
+              onChange: setYearFilter,
               options: [
-                { value: 'all', label: 'All semesters/terms' },
-                ...semesterOptions.map((value) => ({ value, label: value })),
+                { value: 'all', label: 'All year levels' },
+                ...yearOptions.map((value) => ({ value, label: `Year ${value}` })),
               ],
             },
             {
-              key: 'units',
-              value: unitsFilter,
-              onChange: setUnitsFilter,
+              key: 'gender',
+              value: genderFilter,
+              onChange: setGenderFilter,
               options: [
-                { value: 'all', label: 'All units' },
-                ...unitOptions.map((value) => ({ value, label: `${value} units` })),
-              ],
-            },
-            {
-              key: 'prereq',
-              value: prereqFilter,
-              onChange: setPrereqFilter,
-              options: [
-                { value: 'all', label: 'All subjects' },
-                { value: 'with', label: 'With pre-requisites' },
-                { value: 'without', label: 'Without pre-requisites' },
+                { value: 'all', label: 'All genders' },
+                ...genderOptions.map((value) => ({ value, label: value })),
               ],
             },
             {
@@ -100,8 +94,8 @@ const Subjectlist = ({ subjects, programs }) => {
               value: programFilter,
               onChange: setProgramFilter,
               options: [
-                { value: 'all', label: 'All programs' },
-                ...programs.map((program) => ({ value: program.code, label: program.code })),
+                { value: 'all', label: 'All courses' },
+                ...courseOptions.map((value) => ({ value, label: value })),
               ],
             },
             {
@@ -109,10 +103,10 @@ const Subjectlist = ({ subjects, programs }) => {
               value: sortFilter,
               onChange: setSortFilter,
               options: [
-                { value: 'code-asc', label: 'Sort: Code (A-Z)' },
-                { value: 'title-asc', label: 'Sort: Title (A-Z)' },
-                { value: 'units-desc', label: 'Sort: Units (High-Low)' },
-                { value: 'date-desc', label: 'Sort: Newest' },
+                { value: 'name-asc', label: 'Sort: Name (A-Z)' },
+                { value: 'course-asc', label: 'Sort: Course (A-Z)' },
+                { value: 'year-desc', label: 'Sort: Year Level (High-Low)' },
+                { value: 'date-desc', label: 'Sort: Latest Enrollment' },
               ],
             },
           ]}
@@ -123,13 +117,12 @@ const Subjectlist = ({ subjects, programs }) => {
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Code</th>
-                  <th>Title</th>
-                  <th>Program</th>
-                  <th>Units</th>
-                  <th>Semester/Term</th>
-                  <th>Offering</th>
-                  <th>Pre-req</th>
+                  <th>Student ID</th>
+                  <th>Name</th>
+                  <th>Course</th>
+                  <th>Year Level</th>
+                  <th>Gender</th>
+                  <th>Email</th>
                 </tr>
               </thead>
               <tbody>
@@ -140,23 +133,20 @@ const Subjectlist = ({ subjects, programs }) => {
                     onClick={() => setSelectedSubjectId(subject.id)}
                   >
                     <td>
-                      <strong>{subject.code}</strong>
+                      <strong>{subject.studentId}</strong>
                     </td>
-                    <td>{subject.title}</td>
-                    <td>{subject.programCode}</td>
-                    <td>{subject.units}</td>
-                    <td>{subject.semesterTerm}</td>
-                    <td>
-                      <span className={`offer-badge ${subject.offeredAs}`}>{subject.offeredAs}</span>
-                    </td>
-                    <td>{subject.prerequisites.length}</td>
+                    <td>{subject.fullName}</td>
+                    <td>{subject.courseCode}</td>
+                    <td>{subject.yearLevel}</td>
+                    <td>{subject.gender}</td>
+                    <td>{subject.email}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         ) : (
-          <div className="empty-state">No subjects match your filters. Try different filter values.</div>
+          <div className="empty-state">No students match your filters. Try different filter values.</div>
         )}
       </div>
 

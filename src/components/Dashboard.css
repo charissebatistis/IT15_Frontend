@@ -1,0 +1,130 @@
+.dashboard {
+  padding: 20px 0 8px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.dashboard.loading,
+.dashboard.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 18px;
+  color: #666;
+}
+
+.dashboard.error {
+  color: #d32f2f;
+}
+
+.dashboard-header {
+  margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+  margin: 0 0 10px 0;
+  font-size: 32px;
+  color: #1a1a1a;
+}
+
+.dashboard-header p {
+  margin: 0;
+  color: #666;
+  font-size: 16px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #ff6ba8 0%, #ff8cc3 100%);
+  padding: 25px;
+  border-radius: 12px;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.charts-container {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+  align-items: start;
+}
+
+@media (max-width: 1200px) {
+  .charts-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-section {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(232, 163, 194, 0.35);
+}
+
+.chart-section h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #5b1f47;
+}
+
+.chart-section .recharts-responsive-container {
+  min-width: 0;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding-top: 8px;
+  }
+
+  .chart-section {
+    padding: 18px;
+  }
+
+  .stat-card {
+    padding: 18px;
+  }
+
+  .stat-value {
+    font-size: 26px;
+  }
+}

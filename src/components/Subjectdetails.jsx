@@ -2,69 +2,49 @@ import React from 'react';
 
 const Subjectdetails = ({ subject }) => {
   if (!subject) {
-    return <section className="details-panel">Select a subject to view details.</section>;
+    return <section className="details-panel">Select a student to view details.</section>;
   }
 
   return (
     <section className="details-panel subject-details-creative">
       <div className="details-hero">
         <div>
-          <p className="details-kicker">Subject Insight</p>
+          <p className="details-kicker">Student Insight</p>
           <h2>
-            {subject.code} - {subject.title}
+            {subject.studentId} - {subject.fullName}
           </h2>
-          <p>{subject.description || 'No description provided.'}</p>
+          <p>{subject.courseName} ({subject.courseCode})</p>
         </div>
         <div className="details-badge-stack">
-          <span className="details-badge">{subject.semesterTerm}</span>
-          <span className="details-badge soft">{subject.offeredAs}</span>
+          <span className="details-badge">Year {subject.yearLevel}</span>
+          <span className="details-badge soft">{subject.gender}</span>
         </div>
       </div>
 
       <div className="detail-grid">
         <div>
-          <strong>Units:</strong> {subject.units}
+          <strong>Email:</strong> {subject.email}
         </div>
         <div>
-          <strong>Program:</strong> {subject.programCode}
+          <strong>Phone:</strong> {subject.phone}
         </div>
         <div>
-          <strong>Offering:</strong> {subject.offeredAs}
+          <strong>Department:</strong> {subject.department}
         </div>
         <div>
-          <strong>Semester/Term:</strong> {subject.semesterTerm}
+          <strong>Enrolled:</strong> {new Date(subject.enrolledAt).toLocaleDateString()}
         </div>
       </div>
 
       <div className="requirements-grid">
         <article className="requirements-card">
-          <h4>Pre-requisites</h4>
-          {subject.prerequisites.length ? (
-            <div className="requirements-chips">
-              {subject.prerequisites.map((item) => (
-                <span className="mini-chip" key={item}>
-                  {item}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <p>None</p>
-          )}
+          <h4>Address</h4>
+          <p>{subject.address}</p>
         </article>
 
         <article className="requirements-card">
-          <h4>Co-requisites</h4>
-          {subject.corequisites.length ? (
-            <div className="requirements-chips">
-              {subject.corequisites.map((item) => (
-                <span className="mini-chip" key={item}>
-                  {item}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <p>None</p>
-          )}
+          <h4>Date of Birth</h4>
+          <p>{new Date(subject.dateOfBirth).toLocaleDateString()}</p>
         </article>
       </div>
     </section>

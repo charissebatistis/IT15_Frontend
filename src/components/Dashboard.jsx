@@ -1,229 +1,88 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
+import EnrollmentChart from './EnrollmentChart';
+import CourseDistributionChart from './CourseDistributionChart';
+import AttendanceChart from './AttendanceChart';
+import './Dashboard.css';
 
-const Dashboard = ({ programs, subjects }) => {
-  const stats = useMemo(() => {
-    const totalPrograms = programs.length;
-    const totalSubjects = subjects.length;
-    const activePrograms = programs.filter((program) => program.status === 'active').length;
-    const inactivePrograms = totalPrograms - activePrograms;
-    const subjectsWithPrereq = subjects.filter((subject) => subject.prerequisites.length > 0).length;
+const Dashboard = ({ programs = [], subjects = [], stats = null }) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-    const bySemesterTerm = subjects.reduce((acc, subject) => {
-      acc[subject.semesterTerm] = (acc[subject.semesterTerm] || 0) + 1;
-      return acc;
-    }, {});
+  useEffect(() => {
+    if (stats && stats.enrollmentData && stats.courseData && stats.attendanceData && stats.departmentData) {
+      console.log('Dashboard data loaded:', stats);
+      setLoading(false);
+    }
+  }, [stats]);
 
-    const byType = programs.reduce((acc, program) => {
-      acc[program.type] = (acc[program.type] || 0) + 1;
-      return acc;
-    }, {});
+  if (loading) {
+    return <div className="dashboard loading">Loading dashboard...</div>;
+  }
 
-    const byStatus = programs.reduce((acc, program) => {
-      acc[program.status] = (acc[program.status] || 0) + 1;
-      return acc;
-    }, {});
-
-    const recentActivities = [
-      ...programs.map((program) => ({
-        id: `program-${program.id}`,
-        label: `${program.code} program added`,
-        createdAt: program.createdAt,
-        kind: 'Program',
-      })),
-      ...subjects.map((subject) => ({
-        id: `subject-${subject.id}`,
-        label: `${subject.code} subject added`,
-        createdAt: subject.createdAt,
-        kind: 'Subject',
-      })),
-    ]
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .slice(0, 6);
-
-    const programHealth = totalPrograms ? Math.round((activePrograms / totalPrograms) * 100) : 0;
-    const prereqDensity = totalSubjects ? Math.round((subjectsWithPrereq / totalSubjects) * 100) : 0;
-    const totalAttention =
-      (byStatus['under review'] || 0) + (byStatus['phased out'] || 0);
-
-    return {
-      totalPrograms,
-      totalSubjects,
-      activePrograms,
-      inactivePrograms,
-      subjectsWithPrereq,
-      bySemesterTerm,
-      byType,
-      byStatus,
-      recentActivities,
-      programHealth,
-      prereqDensity,
-      totalAttention,
-    };
-  }, [programs, subjects]);
+  if (error) {
+    return <div className="dashboard error">{error}</div>;
+  }
 
   return (
-    <div className="dashboard-module creative-dashboard">
-      <section className="dashboard-hero">
-        <div>
-          <p className="hero-eyebrow">Snapshot</p>
-          <h2>Academic Pulse Overview</h2>
-          <p className="hero-copy">
-            Track growth, balance offerings, and monitor updates in one creative workspace.
-          </p>
-        </div>
-
-        <div className="hero-badges">
-          <article className="hero-badge">
-            <span>Program Health</span>
-            <strong>{stats.programHealth}%</strong>
-          </article>
-          <article className="hero-badge">
-            <span>Pre-req Density</span>
-            <strong>{stats.prereqDensity}%</strong>
-          </article>
-        </div>
-      </section>
-
-      <div className="stats-grid">
-        <article className="stat-card">
-          <h3>Total Programs</h3>
-          <p>{stats.totalPrograms}</p>
-        </article>
-        <article className="stat-card">
-          <h3>Total Subjects</h3>
-          <p>{stats.totalSubjects}</p>
-        </article>
-        <article className="stat-card">
-          <h3>Active Programs</h3>
-          <p>{stats.activePrograms}</p>
-        </article>
-        <article className="stat-card">
-          <h3>Inactive Programs</h3>
-          <p>{stats.inactivePrograms}</p>
-        </article>
-        <article className="stat-card">
-          <h3>Subjects With Pre-requisites</h3>
-          <p>{stats.subjectsWithPrereq}</p>
-        </article>
+    <div className="dashboard">
+      <div className="dashboard-header">
+        <h2>Academic Dashboard</h2>
+        <p>Overview of students, courses, and attendance</p>
       </div>
 
-      <section className="kpi-ribbon">
-        <article className="kpi-card">
-          <p>Active Ratio</p>
-          <strong>{stats.programHealth}%</strong>
-          <div className="kpi-track">
-            <span style={{ width: `${stats.programHealth}%` }}></span>
-          </div>
-        </article>
-        <article className="kpi-card">
-          <p>Curriculum Complexity</p>
-          <strong>{stats.prereqDensity}%</strong>
-          <div className="kpi-track">
-            <span style={{ width: `${stats.prereqDensity}%` }}></span>
-          </div>
-        </article>
-        <article className="kpi-card alert">
-          <p>Programs Needing Attention</p>
-          <strong>{stats.totalAttention}</strong>
-          <small>Under review + phased out</small>
-        </article>
-      </section>
+      {/* Stats Cards */}
+      <div className="stats-grid">
+        {stats && (
+          <>
+            <div className="stat-card">
+              <h3>Total Students</h3>
+              <p className="stat-value">{stats.stats?.total_students || 0}</p>
+            </div>
+            <div className="stat-card">
+              <h3>Total Courses</h3>
+              <p className="stat-value">{stats.stats?.total_courses || 0}</p>
+            </div>
+            <div className="stat-card">
+              <h3>Average Attendance</h3>
+              <p className="stat-value">{stats.stats?.average_attendance || 0}%</p>
+            </div>
+            <div className="stat-card">
+              <h3>Total Enrollments</h3>
+              <p className="stat-value">{stats.stats?.total_enrollments || 0}</p>
+            </div>
+          </>
+        )}
+      </div>
 
-      <div className="dashboard-story-grid">
-        <section className="panel">
-          <h3>Program Mix</h3>
-          <div className="table-shell compact">
-            <table className="data-table compact">
-              <thead>
-                <tr>
-                  <th>Type</th>
-                  <th>Count</th>
-                  <th>Share</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(stats.byType).map(([type, count]) => {
-                  const width = stats.totalPrograms ? Math.round((count / stats.totalPrograms) * 100) : 0;
-                  return (
-                    <tr key={type}>
-                      <td>{type}</td>
-                      <td>{count}</td>
-                      <td>{width}%</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+      {/* Charts */}
+      <div className="charts-container">
+        {stats.enrollmentData && (
+          <div className="chart-section">
+            <h3>Monthly Enrollment Trend</h3>
+            <EnrollmentChart data={stats.enrollmentData} />
           </div>
-        </section>
+        )}
 
-        <section className="panel">
-          <h3>Semester Pulse</h3>
-          <div className="table-shell compact">
-            <table className="data-table compact">
-              <thead>
-                <tr>
-                  <th>Semester/Term</th>
-                  <th>Subjects</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(stats.bySemesterTerm).map(([term, count]) => (
-                  <tr key={term}>
-                    <td>{term}</td>
-                    <td>{count}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {stats.courseData && (
+          <div className="chart-section">
+            <h3>Course Distribution</h3>
+            <CourseDistributionChart data={stats.courseData} />
           </div>
-        </section>
+        )}
 
-        <section className="panel activity-panel">
-          <h3>Fresh Updates</h3>
-          <div className="table-shell compact">
-            <table className="data-table compact">
-              <thead>
-                <tr>
-                  <th>Type</th>
-                  <th>Activity</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {stats.recentActivities.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.kind}</td>
-                    <td>{item.label}</td>
-                    <td>{item.createdAt}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {stats.attendanceData && (
+          <div className="chart-section">
+            <h3>Attendance Trend (Last 3 Months)</h3>
+            <AttendanceChart data={stats.attendanceData} />
           </div>
-        </section>
+        )}
 
-        <section className="panel activity-panel">
-          <h3>Status Watch</h3>
-          <div className="table-shell compact">
-            <table className="data-table compact">
-              <thead>
-                <tr>
-                  <th>Status</th>
-                  <th>Programs</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(stats.byStatus).map(([status, count]) => (
-                  <tr key={status}>
-                    <td>{status}</td>
-                    <td>{count}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {stats.departmentData && (
+          <div className="chart-section">
+            <h3>Students by Department</h3>
+            <CourseDistributionChart data={stats.departmentData} />
           </div>
-        </section>
+        )}
       </div>
     </div>
   );
