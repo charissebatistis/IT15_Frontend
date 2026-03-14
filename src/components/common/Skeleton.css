@@ -1,0 +1,98 @@
+/* Skeleton Loader Animations & Styling */
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+.skeleton-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.skeleton-grid.skeleton-stat {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  margin-bottom: 20px;
+}
+
+.skeleton-grid.skeleton-chart {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 1200px) {
+  .skeleton-grid.skeleton-chart {
+    grid-template-columns: 1fr;
+  }
+}
+
+.skeleton-stat-card {
+  border-radius: 12px;
+  padding: 16px;
+  background: linear-gradient(135deg, #f5e6f0 0%, #f9eef5 100%);
+}
+
+.skeleton-line {
+  background: #e8a3c2;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  height: 12px;
+}
+
+.skeleton-title {
+  width: 60%;
+  height: 10px;
+  margin-bottom: 10px;
+}
+
+.skeleton-value {
+  width: 40%;
+  height: 20px;
+}
+
+.skeleton-chart {
+  border-radius: 12px;
+  padding: 14px;
+  background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+  border: 1px solid rgba(232, 163, 194, 0.35);
+}
+
+.skeleton-bar {
+  background: #e0d5e0;
+  border-radius: 4px;
+  height: 80px;
+  margin: 12px 0;
+}
+
+.skeleton-table-row td {
+  padding: 12px;
+}
+
+.skeleton-table-cell {
+  height: 12px;
+  border-radius: 4px;
+}
+
+/* Pulse animation for subtle effect */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.skeleton-pulse {
+  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

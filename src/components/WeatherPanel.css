@@ -1,14 +1,14 @@
 .weather-panel {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 8px;
+  padding: 8px;
   color: white;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .weather-panel.compact {
-  padding: 15px;
-  margin-bottom: 10px;
+  padding: 6px;
+  margin-bottom: 6px;
 }
 
 .weather-search {
@@ -43,12 +43,12 @@
 .weather-current {
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 15px;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 .weather-icon {
-  font-size: 48px;
+  font-size: 28px;
 }
 
 .weather-info {
@@ -57,27 +57,27 @@
 
 .weather-city {
   margin: 0;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .weather-temp {
-  font-size: 32px;
+  font-size: 22px;
   font-weight: 700;
   line-height: 1;
 }
 
 .weather-description {
-  font-size: 14px;
+  font-size: 13px;
   opacity: 0.9;
   text-transform: capitalize;
 }
 
 .weather-details {
   display: flex;
-  gap: 15px;
-  font-size: 13px;
-  margin-top: 8px;
+  gap: 10px;
+  font-size: 12px;
+  margin-top: 4px;
 }
 
 .weather-forecast {

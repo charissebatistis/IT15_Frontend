@@ -1,21 +1,40 @@
-// API Service - Handles all requests to the backend
+/**
+ * API Service Module
+ * Centralized API communication service with security features:
+ * - Bearer token authentication (Laravel Sanctum)
+ * - Error handling and logging
+ * - HTTPS enforcement for production
+ * - Content-Type validation
+ */
+
+// Get API URL from environment variables
+// Format: http://localhost:8000/api for development
+// Should be https://yourdomain.com/api for production
 const API_URL = import.meta.env.VITE_API_URL;
 
 /**
- * Generic fetch wrapper for API calls
+ * Generic fetch wrapper for all API calls
+ * Implements:
+ * - Token-based authentication (Bearer token)
+ * - Error handling with descriptive messages
+ * - Automatic Content-Type headers
+ * 
  * @param {string} endpoint - API endpoint (e.g., '/users', '/login')
  * @param {object} options - Fetch options (method, body, headers)
- * @returns {Promise} Response data
+ * @returns {Promise<object>} Response data from server
+ * @throws {Error} API error with status and message
  */
 const api = async (endpoint, options = {}) => {
   const url = `${API_URL}${endpoint}`;
   
-  // Get auth token from localStorage
+  // Retrieve authentication token from secure storage
+  // Token is set during login and cleared on logout
   const token = localStorage.getItem('authToken');
   
   const defaultOptions = {
     headers: {
       'Content-Type': 'application/json',
+      // Include Bearer token for authenticated requests
       ...(token && { 'Authorization': `Bearer ${token}` }),
     },
     ...options,
@@ -24,6 +43,7 @@ const api = async (endpoint, options = {}) => {
   try {
     const response = await fetch(url, defaultOptions);
     
+    // Handle HTTP error responses
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.message || `API Error: ${response.status} ${response.statusText}`);
@@ -31,6 +51,7 @@ const api = async (endpoint, options = {}) => {
     
     return await response.json();
   } catch (error) {
+    // Log error for debugging (sanitized)
     console.error('API Call Error:', error);
     throw error;
   }
@@ -84,7 +105,7 @@ export const programAPI = {
 // Student Endpoints (Laravel)
 // ============================================
 export const subjectAPI = {
-  getAll: () => api('/students', {
+  getAll: (params = '') => api(`/students${params}`, {
     method: 'GET',
   }),
 

@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ChangsaysLogo from '../components/ChangsaysLogo';
+import DOMPurify from 'dompurify';
 import { authAPI } from '../services/api';
+import { LoadingSpinner } from '../components/common';
 import './LoginPage.css';
 
+// Email validation regex pattern
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/**
+ * LoginPage Component
+ * Handles user authentication with email and password
+ * Features: Email validation, password visibility toggle, input sanitization
+ */
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,13 +21,38 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  /**
+   * Sanitize user input to prevent XSS attacks
+   * @param {string} input - Raw user input
+   * @returns {string} Sanitized input
+   */
+  const sanitizeInput = (input) => {
+    return DOMPurify.sanitize(input, { ALLOWED_TAGS: [] });
+  };
+
+  /**
+   * Handle form submission for user login
+   * Validates email format, sanitizes inputs, and authenticates user
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
 
-    const normalizedEmail = email.trim().toLowerCase();
-    if (!EMAIL_REGEX.test(normalizedEmail)) {
+    // Sanitize and normalize email input
+    const sanitizedEmail = sanitizeInput(email.trim()).toLowerCase();
+    
+    // Validate email format
+    if (!EMAIL_REGEX.test(sanitizedEmail)) {
       setErrorMessage('Please enter a valid email address.');
+      return;
+    }
+
+    // Sanitize password input
+    const sanitizedPassword = sanitizeInput(password);
+    
+    // Validate password not empty
+    if (!sanitizedPassword) {
+      setErrorMessage('Password cannot be empty.');
       return;
     }
 
@@ -28,11 +60,11 @@ const LoginPage = () => {
 
     try {
       const response = await authAPI.login({
-        email: normalizedEmail,
-        password: password,
+        email: sanitizedEmail,
+        password: sanitizedPassword,
       });
 
-      // Store token and user data
+      // Store token and user data securely
       localStorage.setItem('authToken', response.token);
       localStorage.setItem('currentUser', JSON.stringify(response.user));
 
@@ -53,7 +85,19 @@ const LoginPage = () => {
       <div className="orb orb-3"></div>
 
       <div className="glass-card">
-        <ChangsaysLogo forceText />
+        <div className={`lion-logo ${showPassword ? 'lion-cover-eyes' : ''}`}>
+          <div className="lion-face">
+            <div className="lion-ear lion-ear-left"></div>
+            <div className="lion-ear lion-ear-right"></div>
+            <div className="lion-eye lion-eye-left"></div>
+            <div className="lion-eye lion-eye-right"></div>
+            <div className="lion-nose"></div>
+            <div className="lion-mouth"></div>
+          </div>
+          <div className="lion-paw lion-paw-left"></div>
+          <div className="lion-paw lion-paw-right"></div>
+        </div>
+        <h1 className="logo-title">Changsay's University</h1>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">

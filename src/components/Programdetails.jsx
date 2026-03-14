@@ -6,7 +6,7 @@ const Programdetails = ({ program, subjects }) => {
   }
 
   const relatedStudents = subjects
-    .filter((subject) => subject.courseId === program.id)
+    .filter((subject) => subject.courseCode === program.course_code)
     .slice(0, 8);
 
   return (

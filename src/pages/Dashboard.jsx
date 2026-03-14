@@ -1,17 +1,46 @@
+/**
+ * Dashboard Page Component
+ * Main application page after login
+ * 
+ * Features:
+ * - Multi-module dashboard (Dashboard, Courses, Students)
+ * - Interactive profile menu with logout
+ * - Real-time weather integration
+ * - Student and course data display
+ * - Chart visualizations
+ * - Error handling and loading states
+ * 
+ * Security:
+ * - User authentication verification
+ * - Token-based API requests
+ * - Safe JSON parsing with error handling
+ */
+
 import React, { useEffect, useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import Dashboard from '../components/Dashboard';
 import Programlist from '../components/Programlist';
 import Subjectlist from '../components/Subjectlist';
-import WeatherPanel from '../components/WeatherPanel';
+import { WeatherPanel } from '../components/weather';
 import Chatbox from '../components/Chatbox';
-import ChangsaysLogo from '../components/ChangsaysLogo';
 import { dashboardAPI, programAPI, subjectAPI } from '../services/api';
 import './OfferingsPage.css';
 
+/**
+ * Main Dashboard Page
+ * Renders authenticated user dashboard with multiple modules
+ */
 const DashboardPage = () => {
   const navigate = useNavigate();
+  
+  // Retrieve and safely parse current user from secure storage
   const currentUserRaw = localStorage.getItem('currentUser');
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  
+  /**
+   * Safely parse user data from localStorage
+   * Falls back to null if parsing fails (corrupted data)
+   */
   const currentUser = useMemo(() => {
     if (!currentUserRaw) {
       return null;
@@ -20,17 +49,28 @@ const DashboardPage = () => {
     try {
       return JSON.parse(currentUserRaw);
     } catch (error) {
+      // Log parsing error but don't crash app
       console.error('Failed to parse current user:', error);
       return null;
     }
   }, [currentUserRaw]);
+  
+  // Module state management
   const [activeModule, setActiveModule] = useState('dashboard');
+  
+  // Data state management
   const [programs, setPrograms] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [dashboardStats, setDashboardStats] = useState(null);
+  
+  // UI state management
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  /**
+   * Fetch all dashboard data on component mount
+   * Includes: dashboard stats, programs, subjects
+   */
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
@@ -85,9 +125,32 @@ const DashboardPage = () => {
       }
 
       try {
-        const studentsRes = await subjectAPI.getAll();
-        const studentsData = Array.isArray(studentsRes) ? studentsRes : (studentsRes.data || []);
-        const normalizedStudents = studentsData.map((student) => ({
+        let allStudents = [];
+        let page = 1;
+        let hasMore = true;
+        const pageSize = 15; // Backend returns 15 per page by default
+
+        while (hasMore) {
+          const pageParam = page === 1 ? '' : `?page=${page}`;
+          const studentsRes = await subjectAPI.getAll(pageParam);
+          const studentsData = Array.isArray(studentsRes) ? studentsRes : (studentsRes.data || []);
+          
+          if (studentsData.length === 0) {
+            hasMore = false;
+            break;
+          }
+
+          allStudents.push(...studentsData);
+
+          // If we got fewer than pageSize items, we've reached the end
+          if (studentsData.length < pageSize) {
+            hasMore = false;
+          } else {
+            page++;
+          }
+        }
+
+        const normalizedStudents = allStudents.map((student) => ({
           id: student.id,
           fullName: `${student.first_name} ${student.last_name}`,
           firstName: student.first_name,
@@ -105,16 +168,30 @@ const DashboardPage = () => {
           courseName: student.course?.course_name || 'Unassigned',
           department: student.course?.department || 'N/A',
         }));
+        console.log(`Fetched ${normalizedStudents.length} total students`);
         setSubjects(normalizedStudents);
       } catch (err) {
         console.error('Failed to fetch students:', err);
       }
     };
 
-    if (activeModule === 'subjects') {
+    // Fetch students on component mount for all tabs to access them
+    if (currentUser && subjects.length === 0) {
       fetchSubjects();
     }
-  }, [activeModule, currentUserRaw, subjects.length]);
+  }, [currentUserRaw, subjects.length]);
+
+  // Close profile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setShowProfileMenu(false);
+    };
+
+    if (showProfileMenu) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [showProfileMenu]);
 
   if (!currentUser) {
     return <Navigate to="/" replace />;
@@ -134,19 +211,39 @@ const DashboardPage = () => {
 
       <section className="offerings-shell">
         <header className="page-header">
-          <div className="page-brand">
-            <ChangsaysLogo compact />
-            <p>
-              Welcome to the campus where Chang says, everyone slays. ({currentUser.email || currentUser.id})
-            </p>
+          <div className="profile-header-card" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+            <div className="profile-avatar-small">{currentUser?.name?.charAt(0).toUpperCase() || 'U'}</div>
+            <div className="profile-info">
+              <p className="profile-name-small">{currentUser?.name || 'User'}</p>
+              <span className="profile-badge-small">Admin</span>
+            </div>
+            {showProfileMenu && (
+              <div className="profile-dropdown" onClick={(e) => e.stopPropagation()}>
+                <div className="dropdown-item profile-details">
+                  <p className="dropdown-name">{currentUser?.name}</p>
+                  <p className="dropdown-email">{currentUser?.email}</p>
+                </div>
+                <button type="button" className="dropdown-item logout-item" onClick={(e) => {
+                  e.stopPropagation();
+                  handleLogout();
+                }}>
+                  Log Out
+                </button>
+              </div>
+            )}
           </div>
+
+          <div className="page-brand">
+            <h2>Changsay's University Dashboard</h2>
+          </div>
+          
           <button type="button" className="logout-btn" onClick={handleLogout}>
             Log Out
           </button>
         </header>
 
         <section className="top-utilities">
-          <WeatherPanel compact />
+          <WeatherPanel />
           <Chatbox compact />
         </section>
 

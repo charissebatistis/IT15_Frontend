@@ -48,7 +48,7 @@ const Dashboard = ({ programs = [], subjects = [], stats = null }) => {
             </div>
             <div className="stat-card">
               <h3>Total Enrollments</h3>
-              <p className="stat-value">{stats.stats?.total_enrollments || 0}</p>
+              <p className="stat-value">{Math.min(stats.stats?.total_enrollments || 0, 2000)}</p>
             </div>
           </>
         )}
