@@ -5,14 +5,9 @@ import { authAPI } from '../services/api';
 import { LoadingSpinner } from '../components/common';
 import './LoginPage.css';
 
-// Email validation regex pattern
+
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/**
- * LoginPage Component
- * Handles user authentication with email and password
- * Features: Email validation, password visibility toggle, input sanitization
- */
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -30,27 +25,24 @@ const LoginPage = () => {
     return DOMPurify.sanitize(input, { ALLOWED_TAGS: [] });
   };
 
-  /**
-   * Handle form submission for user login
-   * Validates email format, sanitizes inputs, and authenticates user
-   */
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
 
-    // Sanitize and normalize email input
+   
     const sanitizedEmail = sanitizeInput(email.trim()).toLowerCase();
     
-    // Validate email format
+    
     if (!EMAIL_REGEX.test(sanitizedEmail)) {
       setErrorMessage('Please enter a valid email address.');
       return;
     }
 
-    // Sanitize password input
+   
     const sanitizedPassword = sanitizeInput(password);
     
-    // Validate password not empty
+   
     if (!sanitizedPassword) {
       setErrorMessage('Password cannot be empty.');
       return;
@@ -64,7 +56,7 @@ const LoginPage = () => {
         password: sanitizedPassword,
       });
 
-      // Store token and user data securely
+     
       localStorage.setItem('authToken', response.token);
       localStorage.setItem('currentUser', JSON.stringify(response.user));
 

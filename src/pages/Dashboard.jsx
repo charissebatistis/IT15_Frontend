@@ -25,6 +25,7 @@ import AcademicCalendar from '../components/AcademicCalendar';
 import { WeatherPanel } from '../components/weather';
 import Chatbox from '../components/Chatbox';
 import { dashboardAPI, programAPI, subjectAPI } from '../services/api';
+import { generateMockStudents, generateMockCourses } from '../utils/mockDataGenerator';
 import './OfferingsPage.css';
 
 /**
@@ -60,7 +61,7 @@ const DashboardPage = () => {
   const [activeModule, setActiveModule] = useState('dashboard');
   
   // Data state management
-  const [programs, setPrograms] = useState([]);
+  const [programs, setPrograms] = useState(generateMockCourses());
   const [subjects, setSubjects] = useState([]);
   const [dashboardStats, setDashboardStats] = useState({
     stats: { total_students: 5, total_courses: 30, average_attendance: 88, total_enrollments: 250 },
@@ -166,46 +167,40 @@ const DashboardPage = () => {
 
   useEffect(() => {
     const fetchPrograms = async () => {
-      if (!currentUser || programs.length > 0) {
+      if (!currentUser) {
         return;
       }
 
       try {
         const coursesRes = await programAPI.getAll();
         const coursesData = Array.isArray(coursesRes) ? coursesRes : (coursesRes.data || []);
-        setPrograms(coursesData);
+        if (coursesData.length > 0) {
+          setPrograms(coursesData);
+        } else {
+          // Fallback to mock courses if API returns empty
+          setPrograms(generateMockCourses());
+        }
       } catch (err) {
         console.error('Failed to fetch courses:', err);
+        // Fallback to mock courses on error
+        setPrograms(generateMockCourses());
       }
     };
 
     if (activeModule === 'programs') {
       fetchPrograms();
     }
-  }, [activeModule, currentUserRaw, programs.length]);
+  }, [activeModule, currentUserRaw]);
 
   // Initialize with mock student data on mount
   useEffect(() => {
-    const mockStudents = [
-      { id: 1, fullName: 'John Smith', firstName: 'John', lastName: 'Smith', studentId: 'STU001', email: 'john.smith@university.edu', phone: '555-0101', gender: 'Male', address: '123 Main St', dateOfBirth: '2003-05-15', enrolledAt: '2023-08-01', yearLevel: 1, courseId: 1, courseCode: 'BSIT', courseName: 'Bachelor of Science in IT', department: 'IT' },
-      { id: 2, fullName: 'Maria Garcia', firstName: 'Maria', lastName: 'Garcia', studentId: 'STU002', email: 'maria.garcia@university.edu', phone: '555-0102', gender: 'Female', address: '456 Oak Ave', dateOfBirth: '2003-08-22', enrolledAt: '2023-08-01', yearLevel: 1, courseId: 1, courseCode: 'BSIT', courseName: 'Bachelor of Science in IT', department: 'IT' },
-      { id: 3, fullName: 'James Wilson', firstName: 'James', lastName: 'Wilson', studentId: 'STU003', email: 'james.wilson@university.edu', phone: '555-0103', gender: 'Male', address: '789 Pine Rd', dateOfBirth: '2003-12-09', enrolledAt: '2023-08-01', yearLevel: 1, courseId: 2, courseCode: 'BSCS', courseName: 'Bachelor of Science in CS', department: 'CS' },
-      { id: 4, fullName: 'Patricia Johnson', firstName: 'Patricia', lastName: 'Johnson', studentId: 'STU004', email: 'patricia.johnson@university.edu', phone: '555-0104', gender: 'Female', address: '321 Elm St', dateOfBirth: '2002-11-03', enrolledAt: '2022-08-01', yearLevel: 2, courseId: 1, courseCode: 'BSIT', courseName: 'Bachelor of Science in IT', department: 'IT' },
-      { id: 5, fullName: 'Robert Brown', firstName: 'Robert', lastName: 'Brown', studentId: 'STU005', email: 'robert.brown@university.edu', phone: '555-0105', gender: 'Male', address: '654 Maple Dr', dateOfBirth: '2002-02-18', enrolledAt: '2022-08-01', yearLevel: 2, courseId: 2, courseCode: 'BSCS', courseName: 'Bachelor of Science in CS', department: 'CS' },
-    ];
-    setSubjects(mockStudents);
+    setSubjects(generateMockStudents(550));
   }, []);
 
   useEffect(() => {
     const fetchSubjects = async () => {
       // Mock student data as fallback
-      const mockStudents = [
-        { id: 1, fullName: 'John Smith', firstName: 'John', lastName: 'Smith', studentId: 'STU001', email: 'john.smith@university.edu', phone: '555-0101', gender: 'Male', address: '123 Main St', dateOfBirth: '2003-05-15', enrolledAt: '2023-08-01', yearLevel: 1, courseId: 1, courseCode: 'BSIT', courseName: 'Bachelor of Science in IT', department: 'IT' },
-        { id: 2, fullName: 'Maria Garcia', firstName: 'Maria', lastName: 'Garcia', studentId: 'STU002', email: 'maria.garcia@university.edu', phone: '555-0102', gender: 'Female', address: '456 Oak Ave', dateOfBirth: '2003-08-22', enrolledAt: '2023-08-01', yearLevel: 1, courseId: 1, courseCode: 'BSIT', courseName: 'Bachelor of Science in IT', department: 'IT' },
-        { id: 3, fullName: 'James Wilson', firstName: 'James', lastName: 'Wilson', studentId: 'STU003', email: 'james.wilson@university.edu', phone: '555-0103', gender: 'Male', address: '789 Pine Rd', dateOfBirth: '2003-12-09', enrolledAt: '2023-08-01', yearLevel: 1, courseId: 2, courseCode: 'BSCS', courseName: 'Bachelor of Science in CS', department: 'CS' },
-        { id: 4, fullName: 'Patricia Johnson', firstName: 'Patricia', lastName: 'Johnson', studentId: 'STU004', email: 'patricia.johnson@university.edu', phone: '555-0104', gender: 'Female', address: '321 Elm St', dateOfBirth: '2002-11-03', enrolledAt: '2022-08-01', yearLevel: 2, courseId: 1, courseCode: 'BSIT', courseName: 'Bachelor of Science in IT', department: 'IT' },
-        { id: 5, fullName: 'Robert Brown', firstName: 'Robert', lastName: 'Brown', studentId: 'STU005', email: 'robert.brown@university.edu', phone: '555-0105', gender: 'Male', address: '654 Maple Dr', dateOfBirth: '2002-02-18', enrolledAt: '2022-08-01', yearLevel: 2, courseId: 2, courseCode: 'BSCS', courseName: 'Bachelor of Science in CS', department: 'CS' },
-      ];
+      const mockStudents = generateMockStudents(550);
 
       try {
         let allStudents = [];

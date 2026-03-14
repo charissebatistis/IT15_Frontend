@@ -1,6 +1,6 @@
 # IT15 Integrative Programming Final Project
 
-This is my complete school management system with a React frontend and Laravel backend. It shows a dashboard with 550 students, 23 courses, attendance tracking, and a weather widget. Everything works with a secure API.
+This is my complete school management system with a React frontend and Laravel backend. It shows a dashboard with 550 students, 20 courses, attendance tracking, and a weather widget. Everything works with a secure API.
 
 ## System Overview
 
@@ -19,7 +19,7 @@ Features
 Authentication - Email/password login with bearer tokens
 Dashboard - 4 charts showing enrollment, courses, attendance, departments
 Student Directory - 550 students with search, filter, sort
-Course Management - 23 courses organized by 5 departments
+Course Management - 20 courses organized by 4 departments
 Academic Calendar - Important dates (exams, holidays, deadlines)
 Weather Widget - Current weather and 5-day forecast
 Responsive Design - Works on desktop, tablet, mobile
@@ -525,14 +525,14 @@ To verify everything works:
 1. Login should work
 2. Charts should show enrollment by department, etc.
 3. Student list should show 550 students
-4. Course list should show 23 courses
+4. Course list should show 2 courses
 5. Weather should show real data
 6. Calendar should show seed events
 7. Search and filters should work
 
 ## Notes
 
-- All 550 students and 23 courses are seeded automatically
+- All 550 students and 20 courses are seeded automatically
 - Weather API is real, other data is generated
 - DOMPurify prevents XSS by sanitizing all user input
 - Tokens are encrypted and stored securely
