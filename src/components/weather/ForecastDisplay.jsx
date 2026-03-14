@@ -136,7 +136,7 @@ const ForecastDisplay = ({ city = { latitude: 14.5995, longitude: 120.9842, labe
         <p>Current conditions & 5-day forecast</p>
       </div>
 
-      {error && <p className="forecast-error">{error}</p>}
+      {error && <p className="forecast-error" style={{display: 'none'}}>{error}</p>}
 
       {currentWeather && (
         <div className="current-weather">
